@@ -2,30 +2,27 @@ package com.perfulandia.reportes.controller;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import com.perfulandia.reportes.dto.ReportesDTO;
 import com.perfulandia.reportes.service.ReportesService;
 
 @RestController
 @RequestMapping("/reportes")
-public class ReporteController {
+public class ReportesController {
     private final ReportesService reportesService;
 
-    public ReporteController(ReportesService reportesService) {
+    public ReportesController(ReportesService reportesService) {
         this.reportesService = reportesService;
     }
 
-    // 📊 Obtener reportes de ventas por período
+    // 📊 Obtener reportes de ventas por período con validación
     @GetMapping("/ventas/periodo")
     public ResponseEntity<List<ReportesDTO>> obtenerReportesVentasPorPeriodo(
             @RequestParam LocalDate inicio, @RequestParam LocalDate fin) {
+        if (inicio.isAfter(fin)) {
+            return ResponseEntity.badRequest().body(null);
+        }
         return ResponseEntity.ok(reportesService.obtenerReportesVentasPorPeriodo(inicio, fin));
     }
 
@@ -41,9 +38,14 @@ public class ReporteController {
         return ResponseEntity.ok(reportesService.obtenerInventarioCritico());
     }
 
-    // 🔍 Obtener un reporte específico por ID
+    // 🔍 Obtener un reporte específico por ID con manejo de errores
     @GetMapping("/{id}")
     public ResponseEntity<ReportesDTO> obtenerReportePorId(@PathVariable Long id) {
-        return ResponseEntity.ok(reportesService.obtenerReportePorId(id));
+        ReportesDTO reporte = reportesService.obtenerReportePorId(id);
+        if (reporte != null) {
+            return ResponseEntity.ok(reporte);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
