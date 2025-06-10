@@ -8,7 +8,7 @@ import com.perfulandia.reportes.dto.ReportesDTO;
 import com.perfulandia.reportes.service.ReportesService;
 
 @RestController
-@RequestMapping("/reportes")
+@RequestMapping("/api/reportes")
 public class ReportesController {
     private final ReportesService reportesService;
 
