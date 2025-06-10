@@ -16,7 +16,7 @@ public class ReportesController {
         this.reportesService = reportesService;
     }
 
-    // 📊 Obtener reportes de ventas por período con validación
+    //obtener reportes de ventas por período con validación
     @GetMapping("/ventas/periodo")
     public ResponseEntity<List<ReportesDTO>> obtenerReportesVentasPorPeriodo(
             @RequestParam LocalDate inicio, @RequestParam LocalDate fin) {
@@ -26,19 +26,19 @@ public class ReportesController {
         return ResponseEntity.ok(reportesService.obtenerReportesVentasPorPeriodo(inicio, fin));
     }
 
-    // 🏆 Obtener los vendedores con mejores ventas
+    //obtener los vendedores con mejores ventas
     @GetMapping("/vendedores/top")
     public ResponseEntity<List<ReportesDTO>> obtenerTopVendedores() {
         return ResponseEntity.ok(reportesService.obtenerTopVendedores());
     }
 
-    // 📦 Obtener productos con inventario crítico
+    //obtener productos con inventario crítico
     @GetMapping("/inventario/critico")
     public ResponseEntity<List<ReportesDTO>> obtenerInventarioCritico() {
         return ResponseEntity.ok(reportesService.obtenerInventarioCritico());
     }
 
-    // 🔍 Obtener un reporte específico por ID con manejo de errores
+    //obtener un reporte específico por id con manejo de errores
     @GetMapping("/{id}")
     public ResponseEntity<ReportesDTO> obtenerReportePorId(@PathVariable Long id) {
         ReportesDTO reporte = reportesService.obtenerReportePorId(id);
