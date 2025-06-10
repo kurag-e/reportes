@@ -17,7 +17,7 @@ public class ReportesService {
         this.reportesRepository = reportesRepository;
     }
 
-    // 🔄 Método auxiliar para convertir Reportes a ReportesDTO
+    //método auxiliar para convertir Reportes a ReportesDTO
     private ReportesDTO convertirAReportesDTO(Reportes reporte) {
         return new ReportesDTO(
                 reporte.getIdReporte(),
@@ -28,7 +28,7 @@ public class ReportesService {
         );
     }
 
-    // 📊 Obtener reportes de ventas por período con optimización
+    //otener reportes de ventas por período con optimización
     public List<ReportesDTO> obtenerReportesVentasPorPeriodo(LocalDate inicio, LocalDate fin) {
         return reportesRepository.findByFechaGeneracionBetween(inicio, fin)
                 .stream()
@@ -36,7 +36,7 @@ public class ReportesService {
                 .collect(Collectors.toList());
     }
 
-    // 🏆 Obtener los vendedores con mejores ventas
+    //obtener los vendedores con mejores ventas
     public List<ReportesDTO> obtenerTopVendedores() {
         return reportesRepository.findTopVendedores()
                 .stream()
@@ -44,7 +44,7 @@ public class ReportesService {
                 .collect(Collectors.toList());
     }
 
-    // 📦 Obtener productos con inventario crítico
+    //obtener productos con inventario crítico
     public List<ReportesDTO> obtenerInventarioCritico() {
         return reportesRepository.findInventarioCritico()
                 .stream()
@@ -52,7 +52,7 @@ public class ReportesService {
                 .collect(Collectors.toList());
     }
 
-    // 🔍 Obtener un reporte por ID con mejor manejo de errores
+    //obtener un reporte por id con mejor manejo de errores
     public ReportesDTO obtenerReportePorId(Long id) {
         Reportes reporte = reportesRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reporte no encontrado"));

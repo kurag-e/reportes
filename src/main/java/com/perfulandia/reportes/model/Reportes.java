@@ -30,6 +30,6 @@ public class Reportes {
     @Column(name = "descripcion", length = 255)
     private String descripcion;
 
-    @Column(name = "json_datos", columnDefinition = "TEXT") // Modificar a "CLOB" si usas Oracle
+    @Column(name = "json_datos", columnDefinition = "TEXT")
     private String jsonDatos;
 }
