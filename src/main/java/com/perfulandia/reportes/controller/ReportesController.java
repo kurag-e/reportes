@@ -1,14 +1,21 @@
-package com.perfulandia.reportes.controller;
+package com.perfulandia.reportes.controller; //v2 xq hateoas
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import com.perfulandia.reportes.dto.ReportesDTO;
 import com.perfulandia.reportes.service.ReportesService;
 
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.CollectionModel;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @RestController
-@RequestMapping("/reportes")
+@RequestMapping("/api/reportes")
 public class ReportesController {
     private final ReportesService reportesService;
 
@@ -16,34 +23,66 @@ public class ReportesController {
         this.reportesService = reportesService;
     }
 
-    // 📊 Obtener reportes de ventas por período con validación
+    //obtener reportes x periodo
     @GetMapping("/ventas/periodo")
-    public ResponseEntity<List<ReportesDTO>> obtenerReportesVentasPorPeriodo(
+    public ResponseEntity<CollectionModel<EntityModel<ReportesDTO>>> obtenerReportesVentasPorPeriodo(
             @RequestParam LocalDate inicio, @RequestParam LocalDate fin) {
         if (inicio.isAfter(fin)) {
             return ResponseEntity.badRequest().body(null);
         }
-        return ResponseEntity.ok(reportesService.obtenerReportesVentasPorPeriodo(inicio, fin));
+
+        List<ReportesDTO> reportes = reportesService.obtenerReportesVentasPorPeriodo(inicio, fin);
+
+        List<EntityModel<ReportesDTO>> modelos = reportes.stream()
+            .map(r -> EntityModel.of(r,
+                linkTo(methodOn(ReportesController.class).obtenerReportePorId(r.getIdReporte())).withSelfRel()))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+            CollectionModel.of(modelos,
+                linkTo(methodOn(ReportesController.class).obtenerReportesVentasPorPeriodo(inicio, fin)).withSelfRel())
+        );
     }
 
-    // 🏆 Obtener los vendedores con mejores ventas
+    //obtener top vendedores
     @GetMapping("/vendedores/top")
-    public ResponseEntity<List<ReportesDTO>> obtenerTopVendedores() {
-        return ResponseEntity.ok(reportesService.obtenerTopVendedores());
+    public ResponseEntity<CollectionModel<EntityModel<ReportesDTO>>> obtenerTopVendedores() {
+        List<EntityModel<ReportesDTO>> modelos = reportesService.obtenerTopVendedores().stream()
+            .map(r -> EntityModel.of(r,
+                linkTo(methodOn(ReportesController.class).obtenerReportePorId(r.getIdReporte())).withSelfRel()))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+            CollectionModel.of(modelos,
+                linkTo(methodOn(ReportesController.class).obtenerTopVendedores()).withSelfRel())
+        );
     }
 
-    // 📦 Obtener productos con inventario crítico
+    //obtener inventario critico
     @GetMapping("/inventario/critico")
-    public ResponseEntity<List<ReportesDTO>> obtenerInventarioCritico() {
-        return ResponseEntity.ok(reportesService.obtenerInventarioCritico());
+    public ResponseEntity<CollectionModel<EntityModel<ReportesDTO>>> obtenerInventarioCritico() {
+        List<EntityModel<ReportesDTO>> modelos = reportesService.obtenerInventarioCritico().stream()
+            .map(r -> EntityModel.of(r,
+                linkTo(methodOn(ReportesController.class).obtenerReportePorId(r.getIdReporte())).withSelfRel()))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(
+            CollectionModel.of(modelos,
+                linkTo(methodOn(ReportesController.class).obtenerInventarioCritico()).withSelfRel())
+        );
     }
 
-    // 🔍 Obtener un reporte específico por ID con manejo de errores
+    //reporte por id con hateoas
     @GetMapping("/{id}")
-    public ResponseEntity<ReportesDTO> obtenerReportePorId(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<ReportesDTO>> obtenerReportePorId(@PathVariable Long id) {
         ReportesDTO reporte = reportesService.obtenerReportePorId(id);
         if (reporte != null) {
-            return ResponseEntity.ok(reporte);
+            EntityModel<ReportesDTO> modelo = EntityModel.of(reporte,
+                linkTo(methodOn(ReportesController.class).obtenerReportePorId(id)).withSelfRel(),
+                linkTo(methodOn(ReportesController.class).obtenerTopVendedores()).withRel("top-vendedores"),
+                linkTo(methodOn(ReportesController.class).obtenerInventarioCritico()).withRel("inventario-critico")
+            );
+            return ResponseEntity.ok(modelo);
         } else {
             return ResponseEntity.notFound().build();
         }
