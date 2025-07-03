@@ -12,14 +12,14 @@ import com.perfulandia.reportes.model.Reportes;
 @Repository
 public interface ReportesRepository extends JpaRepository<Reportes, Long> {
     
-    // 🔍 Buscar reportes por rango de fechas
+    //buscar reportes x rango de fechas
     List<Reportes> findByFechaGeneracionBetween(LocalDate inicio, LocalDate fin);
 
-    // 🏆 Obtener los vendedores con mejores ventas
-    @Query("SELECT r FROM Reportes r WHERE r.tipoReporte = 'ventas' ORDER BY r.datosReporte DESC")
+    //obtener los vendedores con mejores ventas
+    @Query("SELECT r FROM Reportes r WHERE r.tipoReporte = 'ventas' ORDER BY r.jsonDatos DESC")
     List<Reportes> findTopVendedores();
 
-    // 📦 Obtener reportes con inventario crítico
-    @Query("SELECT r FROM Reportes r WHERE r.tipoReporte = 'inventario' AND r.datosReporte LIKE '%critico%'")
+    //obtener reportes con inventario crítico
+    @Query("SELECT r FROM Reportes r WHERE r.tipoReporte = 'inventario' AND r.jsonDatos LIKE '%critico%'")
     List<Reportes> findInventarioCritico();
 }
