@@ -9,7 +9,7 @@ public class ReportesDTO {
     private String descripcion;
     private String jsonDatos;
 
-    // Constructor
+    //constructor
     public ReportesDTO(Long idReporte, String tipoReporte, LocalDate fechaGeneracion, String descripcion, String jsonDatos) {
         this.idReporte = idReporte;
         this.tipoReporte = tipoReporte;
@@ -18,7 +18,7 @@ public class ReportesDTO {
         this.jsonDatos = jsonDatos;
     }
 
-    // Getters y Setters
+    //getters y setters
     public Long getIdReporte() { return idReporte; }
     public void setIdReporte(Long idReporte) { this.idReporte = idReporte; }
 
